@@ -36,7 +36,7 @@ st.markdown("""
 # ── Sidebar ───────────────────────────────────────────────────────────────────
 with st.sidebar:
     _CY_PRESETS  = ["Jan\u2013Dec", "Aug\u2013Jul", "Oct\u2013Sep", "Custom"]
-    _cy_basis    = st.radio("Crop Year Basis", _CY_PRESETS, index=0, key="cy_basis")
+    _cy_basis    = st.radio("Crop Year Basis", _CY_PRESETS, index=1, key="cy_basis")
     _MONTH_ABBRS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
     if _cy_basis == "Jan\u2013Dec":
         crop_start_month = 1
@@ -51,7 +51,7 @@ with st.sidebar:
     unit_choice = st.radio(
         "Unit",
         ["MT", "Bales", "Pounds", "CT Lots"],
-        index=0, key="unit_choice_global",
+        index=1, key="unit_choice_global",
     )
 
 # ── Derived unit format ────────────────────────────────────────────────────────
