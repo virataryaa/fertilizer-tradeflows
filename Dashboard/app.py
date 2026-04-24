@@ -1,4 +1,4 @@
-"""
+﻿"""
 Cotton TDM Trade Flow Dashboard
 ================================
 Run: streamlit run app.py
@@ -35,15 +35,13 @@ st.markdown("""
 
 # ── Sidebar ───────────────────────────────────────────────────────────────────
 with st.sidebar:
-    _CY_PRESETS  = ["Jan\u2013Dec", "Aug\u2013Jul", "Oct\u2013Sep", "Custom"]
+    _CY_PRESETS  = ["Jan\u2013Dec", "Aug\u2013Jul", "Custom"]
     _cy_basis    = st.radio("Crop Year Basis", _CY_PRESETS, index=1, key="cy_basis")
     _MONTH_ABBRS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
     if _cy_basis == "Jan\u2013Dec":
         crop_start_month = 1
     elif _cy_basis == "Aug\u2013Jul":
         crop_start_month = 8
-    elif _cy_basis == "Oct\u2013Sep":
-        crop_start_month = 10
     else:
         _cs = st.selectbox("Start month", _MONTH_ABBRS, index=0, key="cy_custom_start")
         crop_start_month = _MONTH_ABBRS.index(_cs) + 1
@@ -152,7 +150,7 @@ def _load_parquet_raw(path: str) -> pd.DataFrame:
 
 
 # ── Tabs ──────────────────────────────────────────────────────────────────────
-tab1, tab2, tab3, tab4 = st.tabs(["TDM", "Source", "Divergence", "Mirror"])
+tab1, tab2, tab3 = st.tabs(["TDM", "Divergence", "Mirror"])
 
 
 # =============================================================================
@@ -1205,7 +1203,7 @@ with tab3:
 # =============================================================================
 # TAB 4 — MIRROR
 # =============================================================================
-with tab4:
+with tab3:
 
     # ── Load both parquets ────────────────────────────────────────────────────
     try:
