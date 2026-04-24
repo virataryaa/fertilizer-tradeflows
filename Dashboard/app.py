@@ -35,13 +35,13 @@ st.markdown("""
 
 # ── Sidebar ───────────────────────────────────────────────────────────────────
 with st.sidebar:
-    _CY_PRESETS  = ["Jan\u2013Dec", "Apr\u2013Mar", "Oct\u2013Sep", "Custom"]
+    _CY_PRESETS  = ["Jan\u2013Dec", "Aug\u2013Jul", "Oct\u2013Sep", "Custom"]
     _cy_basis    = st.radio("Crop Year Basis", _CY_PRESETS, index=0, key="cy_basis")
     _MONTH_ABBRS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
     if _cy_basis == "Jan\u2013Dec":
         crop_start_month = 1
-    elif _cy_basis == "Apr\u2013Mar":
-        crop_start_month = 4
+    elif _cy_basis == "Aug\u2013Jul":
+        crop_start_month = 8
     elif _cy_basis == "Oct\u2013Sep":
         crop_start_month = 10
     else:
