@@ -37,7 +37,7 @@ log = logging.getLogger(__name__)
 API_KEY  = "xngwppoelwepdtqylwakbfmyqxuytfnl"
 BASE_URL = "https://www1.tdmlogin.com/tdm/api/api.asp"
 
-REPORTERS = "BR,US,CI,AR,CN,TW,PK,SG,KR,NZ,UA,TR,AU,AUC"
+REPORTERS = "BR,US,CI,AR,CN,TW,PK,SG,KR,NZ,UA,TR,AU,AUC,IN"
 
 HS_CODES = ["52"]
 
@@ -91,6 +91,7 @@ REPORTER_REGION = {
     "Türkiye":                      "Europe",
     "Australia":                    "Oceania",
     "Australia (AUC)":              "Oceania",
+    "India":                        "Asia",
 }
 
 PARTNER_FIX = {
