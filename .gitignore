@@ -1,3 +1,30 @@
-Code/logs/
+# Python
 __pycache__/
 *.pyc
+*.pyo
+.Python
+
+# Logs
+logs/
+*.log
+run_log.txt
+
+# Cotton files (not part of this repo)
+Code/cotton_exports_ingest.py
+Code/cotton_imports_ingest.py
+Database/tdm_cotton_exports.parquet
+Database/tdm_cotton_imports.parquet
+
+# Test / scratch scripts
+Code/test_api.py
+
+# Automator (machine-specific)
+Automator/run_pipeline.bat
+Automator/run_log.txt
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Streamlit secrets
+.streamlit/secrets.toml
