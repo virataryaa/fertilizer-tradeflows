@@ -49,7 +49,7 @@ SEPARATOR    = "T"
 AGG_PARTNERS = "Y"
 CONV         = "1"
 
-PERIOD_FULL_BEGIN = "202001"
+PERIOD_FULL_BEGIN = "201401"
 PERIOD_END        = "203012"
 
 OUT_FILE = Path(__file__).parents[1] / "Database" / "tdm_fertilizer_exports.parquet"
