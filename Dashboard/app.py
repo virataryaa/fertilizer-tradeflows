@@ -1178,21 +1178,33 @@ with tab1:
                             use_container_width=True, height=min(35 * (len(_pdr_piv_pct) + 2), 380),
                         )
 
-            with st.expander("Destination Table — Top 10 Partners", expanded=False):
+            with st.expander("Destination Table — Top 15 Partners", expanded=False):
                 st.caption(f"Values = {_basis_label} {unit_label}  ·  Rows ranked by total  ·  Colour: white (low) → dark blue (high)")
                 _dest_part_agg = dest_dff.groupby(["PARTNER","CROP_YEAR"])["BAGS"].sum().reset_index()
-                _dest_top10    = _dest_part_agg.groupby("PARTNER")["BAGS"].sum().nlargest(10).index.tolist()
+                _dest_top10    = _dest_part_agg.groupby("PARTNER")["BAGS"].sum().nlargest(15).index.tolist()
                 _dest_tbl      = (
                     _dest_part_agg[_dest_part_agg["PARTNER"].isin(_dest_top10)]
                     .pivot(index="PARTNER", columns="CROP_YEAR", values="BAGS").fillna(0)
                 )
                 _dest_tbl = _dest_tbl.loc[_dest_tbl.sum(axis=1).sort_values(ascending=False).index]
-                st.dataframe(
-                    _dest_tbl.style.background_gradient(cmap="Blues", axis=None).format(f"{{:{_num_fmt}}}")
-                    .set_properties(**{"text-align":"center","font-size":"8px"})
-                    .set_table_styles([{"selector":"th","props":[("text-align","center"),("font-size","8px"),("font-weight","600")]}]),
-                    use_container_width=True, height=min(35 * (len(_dest_tbl.index) + 2), 350),
+                _dest_row = (
+                    _dest_part_agg[~_dest_part_agg["PARTNER"].isin(_dest_top10)]
+                    .groupby("CROP_YEAR")["BAGS"].sum()
+                    .reindex(_dest_tbl.columns, fill_value=0)
                 )
+                _dest_row.name = "Rest of World"
+                _dest_tbl = pd.concat([_dest_tbl, _dest_row.to_frame().T])
+                _dest_total = _dest_tbl.sum(axis=0)
+                _dest_total.name = "Total"
+                _dest_tbl = pd.concat([_dest_tbl, _dest_total.to_frame().T])
+                def _style_dest_tbl(df):
+                    styled = df.style.background_gradient(cmap="Blues", axis=None, subset=pd.IndexSlice[df.index[:-2], :])
+                    styled = styled.apply(lambda _: ["font-weight:600; background-color:#f0f0f0"] * len(df.columns), subset=pd.IndexSlice[["Rest of World"], :], axis=1)
+                    styled = styled.apply(lambda _: ["font-weight:700; background-color:#e0e0e0; border-top:2px solid #999"] * len(df.columns), subset=pd.IndexSlice[["Total"], :], axis=1)
+                    styled = styled.format(f"{{:{_num_fmt}}}").set_properties(**{"text-align":"center","font-size":"8px"})
+                    styled = styled.set_table_styles([{"selector":"th","props":[("text-align","center"),("font-size","8px"),("font-weight","600")]}])
+                    return styled
+                st.dataframe(_style_dest_tbl(_dest_tbl), use_container_width=True, height=38 * (len(_dest_tbl.index) + 1) + 10)
 
     st.markdown("<hr>", unsafe_allow_html=True)
     st.caption(
