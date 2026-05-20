@@ -1206,6 +1206,36 @@ with tab1:
                     return styled
                 st.dataframe(_style_dest_tbl(_dest_tbl), use_container_width=True, height=38 * (len(_dest_tbl.index) + 1) + 10)
 
+            # Monthly partner breakdown
+            with st.expander("Monthly Breakdown — Top 15 Partners + Rest of World", expanded=False):
+                _mo_cy_opts = sorted(dest_dff["CROP_YEAR"].dropna().unique())
+                if _mo_cy_opts:
+                    _mo_sel_cy = st.selectbox("Crop Year", _mo_cy_opts, index=len(_mo_cy_opts) - 1, key=f"{_fk}_monthly_cy")
+                    _mo_dff     = dest_dff[dest_dff["CROP_YEAR"] == _mo_sel_cy]
+                    _mo_agg     = _mo_dff.groupby(["PARTNER","CROP_MONTH_NUM"])["BAGS"].sum().reset_index()
+                    _mo_top15   = _mo_dff.groupby("PARTNER")["BAGS"].sum().nlargest(15).index.tolist()
+                    _mo_tbl     = _mo_agg[_mo_agg["PARTNER"].isin(_mo_top15)].pivot(index="PARTNER", columns="CROP_MONTH_NUM", values="BAGS").fillna(0)
+                    _mo_tbl.columns = [NUM_TO_MONTH.get(c, c) for c in _mo_tbl.columns]
+                    _mo_col_ord = [m for m in MONTH_ORDER if m in _mo_tbl.columns]
+                    _mo_tbl     = _mo_tbl[_mo_col_ord].loc[_mo_tbl.sum(axis=1).sort_values(ascending=False).index]
+                    _mo_row     = _mo_agg[~_mo_agg["PARTNER"].isin(_mo_top15)].groupby("CROP_MONTH_NUM")["BAGS"].sum().rename(index=NUM_TO_MONTH).reindex(_mo_col_ord, fill_value=0)
+                    _mo_row.name = "Rest of World"
+                    _mo_tbl     = pd.concat([_mo_tbl, _mo_row.to_frame().T])
+                    _mo_total   = _mo_tbl.sum(axis=0)
+                    _mo_total.name = "Total"
+                    _mo_tbl     = pd.concat([_mo_tbl, _mo_total.to_frame().T])
+                    st.caption(f"Values = {_mo_sel_cy} · {unit_label} · Rows ranked by total · Colour: white (low) → dark blue (high)")
+                    def _style_monthly_frt(df):
+                        styled = df.style.background_gradient(cmap="Blues", axis=None, subset=pd.IndexSlice[df.index[:-2], :])
+                        styled = styled.apply(lambda _: ["font-weight:600; background-color:#f0f0f0"] * len(df.columns), subset=pd.IndexSlice[["Rest of World"], :], axis=1)
+                        styled = styled.apply(lambda _: ["font-weight:700; background-color:#e0e0e0; border-top:2px solid #999"] * len(df.columns), subset=pd.IndexSlice[["Total"], :], axis=1)
+                        styled = styled.format(f"{{:{_num_fmt}}}").set_properties(**{"text-align":"center","font-size":"8px"})
+                        styled = styled.set_table_styles([{"selector":"th","props":[("text-align","center"),("font-size","8px"),("font-weight","600")]}])
+                        return styled
+                    st.dataframe(_style_monthly_frt(_mo_tbl), use_container_width=True, height=38 * (len(_mo_tbl.index) + 1) + 10)
+                else:
+                    st.info("No data available.")
+
     st.markdown("<hr>", unsafe_allow_html=True)
     st.caption(
         f"Fertilizer TDM Trade Flow Dashboard  ·  ETG Softs  ·  Unit: {unit_label}  ·  "
